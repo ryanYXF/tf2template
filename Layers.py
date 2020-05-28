@@ -1,6 +1,7 @@
 # encoding: utf-8
-#  py3.7, tf2.0
-#  layers for Module
+# env: py3.7, tf2.0
+# author: ryan.Y
+# tip: layers for Module
 import numpy as np
 import tensorflow as tf
 import tensorflow.keras as keras
@@ -41,13 +42,13 @@ class TFBertEmbeddings(tf.keras.layers.Layer):
         self.position_embeddings = tf.keras.layers.Embedding(
             config.max_position_embeddings,
             config.hidden_size,
-            embeddings_initializer=get_initializer(self.initializer_range),
+            embeddings_initializer=initializers.TruncatedNormal(stddev=self.initializer_range),
             name="position_embeddings",
         )
         self.token_type_embeddings = tf.keras.layers.Embedding(
             config.type_vocab_size,
             config.hidden_size,
-            embeddings_initializer=get_initializer(self.initializer_range),
+            embeddings_initializer=initializers.TruncatedNormal(stddev=self.initializer_range),
             name="token_type_embeddings",
         )
 
@@ -64,7 +65,7 @@ class TFBertEmbeddings(tf.keras.layers.Layer):
             self.word_embeddings = self.add_weight(
                 "weight",
                 shape=[self.vocab_size, self.hidden_size],
-                initializer=get_initializer(self.initializer_range),
+                initializer=initializers.TruncatedNormal(stddev=self.initializer_range),
             )
         super().build(input_shape)
 
@@ -147,13 +148,13 @@ class TFBertSelfAttention(tf.keras.layers.Layer):
         self.all_head_size = self.num_attention_heads * self.attention_head_size
 
         self.query = tf.keras.layers.Dense(
-            self.all_head_size, kernel_initializer=get_initializer(config.initializer_range), name="query"
+            self.all_head_size, kernel_initializer=initializers.TruncatedNormal(stddev=config.initializer_range), name="query"
         )
         self.key = tf.keras.layers.Dense(
-            self.all_head_size, kernel_initializer=get_initializer(config.initializer_range), name="key"
+            self.all_head_size, kernel_initializer=initializers.TruncatedNormal(stddev=config.initializer_range), name="key"
         )
         self.value = tf.keras.layers.Dense(
-            self.all_head_size, kernel_initializer=get_initializer(config.initializer_range), name="value"
+            self.all_head_size, kernel_initializer=initializers.TruncatedNormal(stddev=config.initializer_range), name="value"
         )
 
         self.dropout = tf.keras.layers.Dropout(config.attention_probs_dropout_prob)
@@ -211,7 +212,7 @@ class TFBertSelfOutput(tf.keras.layers.Layer):
     def __init__(self, config, **kwargs):
         super().__init__(**kwargs)
         self.dense = tf.keras.layers.Dense(
-            config.hidden_size, kernel_initializer=get_initializer(config.initializer_range), name="dense"
+            config.hidden_size, kernel_initializer=initializers.TruncatedNormal(stddev=config.initializer_range), name="dense"
         )
         self.LayerNorm = tf.keras.layers.LayerNormalization(epsilon=config.layer_norm_eps, name="LayerNorm")
         self.dropout = tf.keras.layers.Dropout(config.hidden_dropout_prob)
@@ -247,7 +248,7 @@ class TFBertIntermediate(tf.keras.layers.Layer):
     def __init__(self, config, **kwargs):
         super().__init__(**kwargs)
         self.dense = tf.keras.layers.Dense(
-            config.intermediate_size, kernel_initializer=get_initializer(config.initializer_range), name="dense"
+            config.intermediate_size, kernel_initializer=initializers.TruncatedNormal(stddev=config.initializer_range), name="dense"
         )
         if isinstance(config.hidden_act, str):
             self.intermediate_act_fn = ACT2FN[config.hidden_act]
@@ -264,7 +265,7 @@ class TFBertOutput(tf.keras.layers.Layer):
     def __init__(self, config, **kwargs):
         super().__init__(**kwargs)
         self.dense = tf.keras.layers.Dense(
-            config.hidden_size, kernel_initializer=get_initializer(config.initializer_range), name="dense"
+            config.hidden_size, kernel_initializer=initializers.TruncatedNormal(stddev=config.initializer_range), name="dense"
         )
         self.LayerNorm = tf.keras.layers.LayerNormalization(epsilon=config.layer_norm_eps, name="LayerNorm")
         self.dropout = tf.keras.layers.Dropout(config.hidden_dropout_prob)
@@ -335,7 +336,7 @@ class TFBertPooler(tf.keras.layers.Layer):
         super().__init__(**kwargs)
         self.dense = tf.keras.layers.Dense(
             config.hidden_size,
-            kernel_initializer=get_initializer(config.initializer_range),
+            kernel_initializer=initializers.TruncatedNormal(stddev=config.initializer_range),
             activation="tanh",
             name="dense",
         )
@@ -352,7 +353,7 @@ class TFBertPredictionHeadTransform(tf.keras.layers.Layer):
     def __init__(self, config, **kwargs):
         super().__init__(**kwargs)
         self.dense = tf.keras.layers.Dense(
-            config.hidden_size, kernel_initializer=get_initializer(config.initializer_range), name="dense"
+            config.hidden_size, kernel_initializer=initializers.TruncatedNormal(stddev=config.initializer_range), name="dense"
         )
         if isinstance(config.hidden_act, str):
             self.transform_act_fn = ACT2FN[config.hidden_act]
@@ -402,7 +403,7 @@ class TFBertNSPHead(tf.keras.layers.Layer):
     def __init__(self, config, **kwargs):
         super().__init__(**kwargs)
         self.seq_relationship = tf.keras.layers.Dense(
-            2, kernel_initializer=get_initializer(config.initializer_range), name="seq_relationship"
+            2, kernel_initializer=initializers.TruncatedNormal(stddev=config.initializer_range), name="seq_relationship"
         )
 
     def call(self, pooled_output):

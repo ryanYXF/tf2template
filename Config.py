@@ -1,13 +1,24 @@
 # encoding: utf-8
-#  py3.7, tf2.0
-#  layers for Module
+# env: py3.7, tf2.0
+# author: ryan.Y
+
+# tip: Config may be recursively added to the parent config
+#   config
+#       dataset_config
+#           batch_size
+#           shuffle_buffer_size
+#           ......
+#       loss_config
+#       model_config
+#       ...... 
+    
 import numpy as np
 import tensorflow as tf
 import tensorflow.keras as keras
 import tensorflow.keras.backend as K
 
 
-class Config():
+class Config(object):
     """
     config is used to combine different hyper parameters in hierachical structure
 
@@ -19,6 +30,9 @@ class Config():
         loss_config
         model_config
         ...... 
+    config = Config()
+    dataset_config = config(dataset_json_dict)
+    config.dataset_config = dataset_config
     
     all config objects are instance of this class, the relation among them are determined by users
     """

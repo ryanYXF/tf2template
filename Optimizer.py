@@ -1,7 +1,7 @@
 # encoding: utf-8
 # env: py3.7, tf2.0
 # author: ryan.Y 
-# tip: layers for loss
+# tip: code for optimizer
 
 # the loss may be strong related to some parameters, 
 # in this case, please prepare a tf.keras.layers.layer
